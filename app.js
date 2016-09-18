@@ -1,15 +1,19 @@
 import express from 'express'
 import exhbs from 'express-handlebars'
 import env from 'node-env-file'
-env( __dirname + '/.env', { logger: console } )
+import bodyParser from 'body-parser'
+
+env('.env', {logger: console})
+
 const app = express()
 
 const PORT = process.env.PORT
 
-app.use( express.static( `${__dirname}/public` ) )
+app.use( express.static(`${__dirname}/public`))
+app.use(bodyParser.urlencoded({extended:true}))
 
-app.set( 'views', `${__dirname}/src/views` )
-app.engine( '.hbs', exhbs( {
+app.set('views', `${__dirname}/src/views`)
+app.engine('.hbs', exhbs({
   defaultLayout: 'main',
   extname: '.hbs',
   layoutsDir: `${app.get('views')}/layouts`,
@@ -18,12 +22,12 @@ app.engine( '.hbs', exhbs( {
   helpers: {
     ifGreater: require('./src/helpers/ifGreater.js')
   }
-} ) )
+}))
 
-app.set( 'view engine', '.hbs' )
+app.set('view engine', '.hbs')
 
-require( './src/routes/root' )( app )
+require('./src/routes/root')(app)
 
 app.listen(PORT, function() {
-  console.log( `listening on ${PORT}` )
+  console.log(`listening on ${PORT}`)
 })
